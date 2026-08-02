@@ -266,8 +266,11 @@ const Reserve = () => {
               <div className="form-group">
                 <label className="form-label">Special Requests (optional)</label>
                 <Tooltip content="Add dietary requirements, occasion details, or seating preferences" position="right">
-                  <textarea className="form-textarea" placeholder="Dietary requirements, occasion, seating preferences..." value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} rows={3} />
+                  <textarea className="form-textarea" placeholder="Dietary requirements, occasion, seating preferences..." value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} rows={3} maxLength={500} />
                 </Tooltip>
+                <div className="char-counter">
+                  {specialRequests.length} / 500
+                </div>
               </div>
               {error && <p className="form-error" role="alert" aria-live="assertive">{error}</p>}
               <div className="reserve-step__actions">
@@ -328,6 +331,13 @@ const Reserve = () => {
 
         .reserve-success { padding: var(--space-3xl) 0; text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
         .success-icon { font-size: 4rem; }
+
+        .char-counter {
+          font-size: 0.78rem;
+          color: var(--color-text-muted);
+          text-align: right;
+          margin-top: 4px;
+        }
 
         @media (max-width: 600px) {
           .reserve-step__fields { grid-template-columns: 1fr; }
