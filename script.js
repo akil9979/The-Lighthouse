@@ -142,6 +142,12 @@ function smoothScroll(e) {
     closeMobileMenu();
     return;
   }
+  if (targetId === '#reviews') {
+    e.preventDefault();
+    openReviewsModal();
+    closeMobileMenu();
+    return;
+  }
   if (!targetId || targetId.startsWith('http') || targetId === '#') return;
   const target = document.querySelector(targetId);
   if (!target) return;
@@ -1047,6 +1053,10 @@ function setupReviews() {
       setTimeout(() => {
         reviewMsg.style.display = "none";
       }, 3000);
+      
+      if (typeof closeReviewsModal === "function") {
+        setTimeout(closeReviewsModal, 1500);
+      }
     });
   }
 
@@ -2082,6 +2092,52 @@ function setupReservationModal() {
   }
 }
 
+function openReviewsModal() {
+  const modal = document.getElementById("reviews");
+  if (!modal) return;
+  modal.classList.add("active");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeReviewsModal() {
+  const modal = document.getElementById("reviews");
+  if (!modal) return;
+  modal.classList.remove("active");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+function setupReviewsModal() {
+  const modal = document.getElementById("reviews");
+  const closeBtn = document.getElementById("closeReviewsModal");
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeReviewsModal);
+  }
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeReviewsModal();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal && modal.classList.contains("active")) {
+      closeReviewsModal();
+    }
+  });
+
+  // Bind clicks on navbar/footer reviews link to open modal
+  document.querySelectorAll('a[href="#reviews"]').forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      openReviewsModal();
+      if (typeof closeMobileMenu === "function") closeMobileMenu();
+    });
+  });
+}
+
 // =============================================
 // Feature 9: Reservation Success & Calendar Integration
 // =============================================
@@ -2416,6 +2472,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (navToggle) navToggle.addEventListener("click", toggleMobileMenu);
   if (reservationForm) reservationForm.addEventListener("submit", handleFormSubmit);
   setupReservationModal();
+  setupReviewsModal();
 
   window.addEventListener("scroll", handleScroll, { passive: true });
   window.addEventListener("resize", () => {

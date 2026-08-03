@@ -966,6 +966,69 @@
     </div>
   </div>
 
+  <!-- Reviews Modal -->
+  <section id="reviews" class="reviews-modal" aria-hidden="true" role="dialog" aria-labelledby="reviewsModalTitle">
+    <div class="reviews-modal-content">
+      <button id="closeReviewsModal" class="reviews-modal-close" aria-label="Close modal">&times;</button>
+      <div class="reviews-modal-header">
+        <span class="section-label" data-i18n="reviews.label">Guest Experiences</span>
+        <h2 id="reviewsModalTitle" class="modal-title" data-i18n="reviews.title">Customer Reviews</h2>
+      </div>
+
+      <!-- Review cards rendered dynamically by JS -->
+      <div id="reviews-grid" class="reviews-grid"></div>
+
+      <!-- Review submission form -->
+      <div class="review-form-wrapper">
+        <h3 class="review-form-heading" data-i18n="reviews.share">Share Your Experience</h3>
+
+        <form id="review-form" novalidate>
+          <div class="form-group">
+            <label for="review-name" data-i18n="reviews.name">Your Name</label>
+            <input
+              type="text"
+              id="review-name"
+              name="name"
+              data-i18n-placeholder="reviews.name_placeholder"
+              placeholder="e.g. Priya Sharma"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <fieldset id="star-input">
+              <legend data-i18n="reviews.rating">Rating</legend>
+              <div class="star-input" role="group" aria-label="Star rating">
+                <button type="button" class="star-btn" data-value="1" aria-label="1 star">★</button>
+                <button type="button" class="star-btn" data-value="2" aria-label="2 stars">★</button>
+                <button type="button" class="star-btn" data-value="3" aria-label="3 stars">★</button>
+                <button type="button" class="star-btn" data-value="4" aria-label="4 stars">★</button>
+                <button type="button" class="star-btn" data-value="5" aria-label="5 stars">★</button>
+              </div>
+              <input type="hidden" id="review-rating" name="rating" value="0" />
+            </fieldset>
+          </div>
+
+          <div class="form-group">
+            <label for="review-text" data-i18n="reviews.text">Your Review</label>
+            <textarea
+              id="review-text"
+              name="text"
+              rows="4"
+              data-i18n-placeholder="reviews.text_placeholder"
+              placeholder="Tell us about your visit..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" data-i18n="reviews.submit">Submit Review</button>
+          <div id="review-msg" class="form-note" style="display: none;"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <button id="backToTop" data-i18n="back_to_top">BACK TO TOP ▲</button>
 
   <script src="script.js" defer></script>

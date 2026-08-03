@@ -4558,3 +4558,196 @@ body.light-theme .newsletter-form input {
   }
 }
 
+/* ── Reviews Modal Overlay ── */
+.reviews-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3500;
+  background-color: rgba(16, 13, 11, 0.85);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.reviews-modal.active {
+  display: flex;
+}
+
+.reviews-modal-content {
+  background-color: var(--color-bg-card, #2a2725);
+  border: 1px solid var(--color-border, #3d3835);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 680px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  animation: modalReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Scrollable reviews grid in modal */
+.reviews-modal .reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.reviews-modal .review-card {
+  min-height: auto;
+  padding: 18px;
+  gap: 10px;
+}
+
+/* Custom scrollbar for reviews grid in modal */
+.reviews-modal .reviews-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.reviews-modal .reviews-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+.reviews-modal .reviews-grid::-webkit-scrollbar-thumb {
+  background: var(--color-border, #3d3835);
+  border-radius: 3px;
+}
+.reviews-modal .reviews-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary, #d4af37);
+}
+
+.reviews-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-text-muted, #a0958d);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.reviews-modal-close:hover {
+  color: var(--color-primary, #d4af37);
+  transform: scale(1.1);
+}
+
+.reviews-modal-header {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.reviews-modal-header .modal-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--color-text, #f5f0eb);
+  margin: 6px 0;
+}
+
+.reviews-modal-header .modal-subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #a0958d);
+}
+
+.reviews-modal .review-form-wrapper {
+  border-top: 1px solid var(--color-border, #3d3835);
+  padding-top: 24px;
+}
+
+.reviews-modal .review-form-heading {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--color-text, #f5f0eb);
+}
+
+.reviews-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reviews-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reviews-modal label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text, #f5f0eb);
+  letter-spacing: 0.5px;
+}
+
+.reviews-modal input,
+.reviews-modal textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: var(--color-bg, #1a1816);
+  border: 1px solid var(--color-border, #3d3835);
+  border-radius: 8px;
+  color: var(--color-text, #f5f0eb);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reviews-modal input:focus,
+.reviews-modal textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #d4af37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.reviews-modal .star-input {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.reviews-modal .star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-border, #3d3835);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+  line-height: 1;
+}
+
+.reviews-modal .star-btn.active,
+.reviews-modal .star-btn:hover {
+  color: var(--color-primary, #d4af37);
+  transform: scale(1.15);
+}
+
+.reviews-modal .form-note {
+  font-size: 0.85rem;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.reviews-modal .btn-primary {
+  align-self: center;
+  padding: 12px 36px;
+}
+
+
