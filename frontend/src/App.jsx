@@ -1,10 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { MenuProvider } from './context/MenuContext';
+import { CartProvider } from './context/CartContext';
+import { ReservationProvider } from './context/ReservationContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import CustomCursor from "./components/CustomCursor";
+import ReservationSummarySticky from './components/ReservationSummarySticky';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Reserve from './pages/Reserve';

@@ -57,6 +57,9 @@ const Navbar = () => {
           <NavLink to="/menu" onClick={() => setMenuOpen(false)} className={({ isActive }) => isActive ? 'nav-link nav-link--active' : 'nav-link'}>
             Menu
           </NavLink>
+          <NavLink to="/reserve" onClick={() => setMenuOpen(false)} className={({ isActive }) => isActive ? 'nav-link nav-link--active' : 'nav-link'}>
+            Reserve & Pre-order
+          </NavLink>
 
           <Tooltip content="View your cart" position="bottom">
             <button type="button" className="navbar__cart-btn" onClick={handleCartClick} aria-label="Open cart">
@@ -86,6 +89,18 @@ const Navbar = () => {
               </Link>
             </Tooltip>
           )}
+
+          <Tooltip content="View your cart" position="bottom">
+            <button
+              type="button"
+              className="navbar__cart-btn"
+              onClick={() => setCartOpen(true)}
+              aria-label="Open cart"
+            >
+              🛒
+              {cartCount > 0 && <span className="navbar__cart-badge">{cartCount}</span>}
+            </button>
+          </Tooltip>
         </nav>
 
         <Tooltip content="Toggle navigation menu" position="bottom">
