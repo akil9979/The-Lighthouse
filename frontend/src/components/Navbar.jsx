@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import Tooltip from './Tooltip';
 import ConfirmModal from './ConfirmModal';
+import CartDrawer from './CartDrawer';
 import './Navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -33,6 +37,11 @@ const Navbar = () => {
     setShowLogoutConfirm(false);
   };
 
+  const handleCartClick = () => {
+    setIsCartOpen(true);
+    setMenuOpen(false);
+  };
+
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="container navbar__inner">
@@ -48,6 +57,13 @@ const Navbar = () => {
           <NavLink to="/menu" onClick={() => setMenuOpen(false)} className={({ isActive }) => isActive ? 'nav-link nav-link--active' : 'nav-link'}>
             Menu
           </NavLink>
+
+          <Tooltip content="View your cart" position="bottom">
+            <button type="button" className="navbar__cart-btn" onClick={handleCartClick} aria-label="Open cart">
+              🛒
+              {cartCount > 0 && <span className="navbar__cart-badge">{cartCount}</span>}
+            </button>
+          </Tooltip>
 
           {user ? (
             <>
@@ -92,6 +108,8 @@ const Navbar = () => {
         onConfirm={handleConfirmLogout}
         onCancel={handleCancelLogout}
       />
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 };

@@ -1,0 +1,49 @@
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
+
+const CartContext = createContext(null);
+
+export const CartProvider = ({ children }) => {
+  const [cartItems, setCartItems] = useState([]);
+
+  const addToCart = useCallback((entry) => {
+    // entry: { menuItemId, name, image, basePrice, selectedToppings, selectedVariant, quantity, unitPrice }
+    const cartItemId = `${entry.menuItemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    setCartItems((prev) => [...prev, { ...entry, cartItemId }]);
+  }, []);
+
+  const removeFromCart = useCallback((cartItemId) => {
+    setCartItems((prev) => prev.filter((i) => i.cartItemId !== cartItemId));
+  }, []);
+
+  const updateQuantity = useCallback((cartItemId, quantity) => {
+    setCartItems((prev) =>
+      prev.map((i) => (i.cartItemId === cartItemId ? { ...i, quantity: Math.max(1, quantity) } : i))
+    );
+  }, []);
+
+  const clearCart = useCallback(() => setCartItems([]), []);
+
+  const cartCount = useMemo(
+    () => cartItems.reduce((sum, i) => sum + i.quantity, 0),
+    [cartItems]
+  );
+
+  const cartTotal = useMemo(
+    () => cartItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0),
+    [cartItems]
+  );
+
+  return (
+    <CartContext.Provider
+      value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => {
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error('useCart must be used within CartProvider');
+  return ctx;
+};

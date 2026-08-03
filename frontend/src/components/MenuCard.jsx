@@ -3,6 +3,7 @@ import { getMenuItems } from '../api/menuApi';
 import { getReviews } from '../api/reviewApi';
 import { useMenu } from '../context/MenuContext';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { useEffect, useState } from 'react';
 import Tooltip from './Tooltip';
 
@@ -17,13 +18,21 @@ const TAG_LABELS = {
 const MenuCard = ({ item }) => {
   const { updateItem } = useMenu();
   const { user } = useAuth();
+  const { addToCart } = useCart();
   const [toggling, setToggling] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [dishReviews, setDishReviews] = useState([]);
   const [relatedItems, setRelatedItems] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [selectedToppings, setSelectedToppings] = useState([]);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
   const isAdmin = user?.role === 'admin';
+
+  const hasCustomizations =
+    (item.customizations?.toppings?.length > 0) || (item.customizations?.variants?.length > 0);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -35,6 +44,15 @@ const MenuCard = ({ item }) => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen]);
+
+  // Reset customization state fresh every time the modal opens for this item
+  useEffect(() => {
+    if (!isOpen) return;
+    setSelectedToppings([]);
+    setSelectedVariant(item.customizations?.variants?.[0] || null);
+    setQuantity(1);
+    setJustAdded(false);
+  }, [isOpen, item._id]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -87,6 +105,37 @@ const MenuCard = ({ item }) => {
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
+
+  // ---- Customization logic ----
+  const toppingsTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
+  const variantModifier = selectedVariant?.priceModifier || 0;
+  const unitPrice = item.price + toppingsTotal + variantModifier;
+  const finalPrice = unitPrice * quantity;
+
+  const toggleTopping = (topping) => {
+    setSelectedToppings((prev) => {
+      const exists = prev.some((t) => t.name === topping.name);
+      if (exists) return prev.filter((t) => t.name !== topping.name);
+      if (item.customizations?.allowMultipleToppings === false) return [topping];
+      return [...prev, topping];
+    });
+  };
+
+  const handleAddToCart = (event) => {
+    event.stopPropagation();
+    addToCart({
+      menuItemId: item._id,
+      name: item.name,
+      image: item.image,
+      basePrice: item.price,
+      selectedToppings,
+      selectedVariant,
+      quantity,
+      unitPrice
+    });
+    setJustAdded(true);
+    setTimeout(() => setIsOpen(false), 700);
+  };
 
   return (
     <>
@@ -286,6 +335,33 @@ const MenuCard = ({ item }) => {
             font-size: 1.25rem;
             cursor: pointer;
           }
+
+          .menu-card-detail__customize { display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+          .menu-card-detail__customize h4 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--color-text); margin: 0; }
+          .customize__group { display: flex; flex-direction: column; gap: 0.5rem; }
+          .customize__label { font-size: 0.75rem; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+          .customize__options { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; }
+          .customize__option { display: flex; align-items: center; gap: 0.45rem; font-size: 0.9rem; color: var(--color-text-muted); cursor: pointer; }
+          .customize__option input { accent-color: var(--color-primary); cursor: pointer; }
+          .customize__quantity { display: flex; align-items: center; gap: 0.9rem; }
+          .customize__quantity button {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--color-border); background: transparent;
+            color: var(--color-text); font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color var(--transition), background var(--transition);
+          }
+          .customize__quantity button:hover { border-color: var(--color-primary); background: rgba(201,169,98,0.08); }
+          .customize__quantity span { min-width: 20px; text-align: center; font-weight: 600; color: var(--color-text); }
+          .customize__total {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 0.75rem; border-top: 1px dashed var(--color-border);
+          }
+          .customize__total span { font-size: 0.85rem; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+          .customize__total strong { font-family: var(--font-serif); font-size: 1.3rem; color: var(--color-primary); }
+          .customize__add-btn { width: 100%; transition: background var(--transition), transform var(--transition); }
+          .customize__add-btn:disabled { opacity: 0.75; cursor: default; }
+
           @media (max-width: 768px) {
             .menu-card-detail { grid-template-columns: 1fr; }
             .menu-card-detail__media { min-height: 240px; }
@@ -324,6 +400,70 @@ const MenuCard = ({ item }) => {
                 </span>
                 <span className="menu-card-detail__tag">⏱ {item.preparationTime} min</span>
                 <span className="menu-card-detail__tag">{item.category}</span>
+              </div>
+
+              <div className="menu-card-detail__customize" onClick={(event) => event.stopPropagation()}>
+                {hasCustomizations && <h4>Customize your dish</h4>}
+
+                {item.customizations?.variants?.length > 0 && (
+                  <div className="customize__group">
+                    <span className="customize__label">Choose size / variant</span>
+                    <div className="customize__options">
+                      {item.customizations.variants.map((variant) => (
+                        <label key={variant.name} className="customize__option">
+                          <input
+                            type="radio"
+                            name={`variant-${item._id}`}
+                            checked={selectedVariant?.name === variant.name}
+                            onChange={() => setSelectedVariant(variant)}
+                          />
+                          {variant.name}
+                          {variant.priceModifier > 0 && <span>&nbsp;(+₹{variant.priceModifier})</span>}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {item.customizations?.toppings?.length > 0 && (
+                  <div className="customize__group">
+                    <span className="customize__label">Add-ons / toppings</span>
+                    <div className="customize__options">
+                      {item.customizations.toppings.map((topping) => (
+                        <label key={topping.name} className="customize__option">
+                          <input
+                            type={item.customizations?.allowMultipleToppings === false ? 'radio' : 'checkbox'}
+                            name={item.customizations?.allowMultipleToppings === false ? `topping-${item._id}` : undefined}
+                            checked={selectedToppings.some((t) => t.name === topping.name)}
+                            onChange={() => toggleTopping(topping)}
+                          />
+                          {topping.name}&nbsp;(+₹{topping.price})
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="customize__quantity">
+                  <span className="customize__label">Quantity</span>
+                  <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
+                  <span>{quantity}</span>
+                  <button type="button" onClick={() => setQuantity((q) => q + 1)} aria-label="Increase quantity">+</button>
+                </div>
+
+                <div className="customize__total">
+                  <span>Total</span>
+                  <strong>₹{finalPrice}</strong>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-primary customize__add-btn"
+                  onClick={handleAddToCart}
+                  disabled={justAdded || !item.isAvailable}
+                >
+                  {justAdded ? 'Added ✓' : !item.isAvailable ? 'Currently Sold Out' : `Add to Cart — ₹${finalPrice}`}
+                </button>
               </div>
 
               <div className="menu-card-detail__reviews">

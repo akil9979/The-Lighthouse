@@ -38,6 +38,20 @@ const menuItemSchema = new mongoose.Schema(
       enum: ['seasonal', 'chef-special', 'popular', 'new', 'spicy'],
       default: []
     },
+    customizations: {
+      toppings: [{
+        name: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, min: 0, default: 0 }
+      }],
+      variants: [{
+        name: { type: String, required: true, trim: true },
+        priceModifier: { type: Number, required: true, default: 0 }
+      }],
+      allowMultipleToppings: {
+        type: Boolean,
+        default: true
+      }
+    },
     // KEY DIFFERENTIATOR: live availability toggle
     isAvailable: {
       type: Boolean,

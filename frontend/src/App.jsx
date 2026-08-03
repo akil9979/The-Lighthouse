@@ -10,12 +10,14 @@ import Menu from './pages/Menu';
 import Reserve from './pages/Reserve';
 import Auth from './pages/Auth';
 import AdminDashboard from './pages/AdminDashboard';
+import { CartProvider } from './context/CartContext';
 
 const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
         <MenuProvider>
+          <CartProvider>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <CustomCursor />
             <Navbar />
@@ -42,6 +44,7 @@ const App = () => {
             </Routes>
             <Footer />
           </div>
+          </CartProvider>
         </MenuProvider>
       </AuthProvider>
     </BrowserRouter>
