@@ -1,5 +1,20 @@
 
-const store = new Map();
+const store = new Map(); //{ timestamps: [], windowMs }
+
+//Periodic Cleanup of inactive ip address
+setInterval(()=>{
+  for(const [key, entry] of store.entries()){
+    const now = Date.now();
+    const active = entry.timestamps.filter((ts)=>now-ts<entry.windowMs);
+    if(active.length===0){
+      store.delete(key);
+    }
+    else if(active.length!==entry.timestamps.length){
+      store.set(key, {timestamps: active, windowMs: entry.windowMs})
+    }
+    
+  }
+}, 60000);
 
 function rateLimiter(options = {}) {
   const windowMs = options.windowMs || 60 * 60 * 1000; 
@@ -10,12 +25,12 @@ function rateLimiter(options = {}) {
       const ip = req.ip || req.connection.remoteAddress || 'unknown';
       const key = `${ip}:${req.path}`;
       const now = Date.now();
-      const entry = store.get(key) || [];
+      const entry = store.get(key) || {timestamps: [], windowMs};
 
       // prune old timestamps
-      const recent = entry.filter((ts) => now - ts < windowMs);
+      const recent = entry.timestamps.filter((ts) => now - ts < windowMs);
       recent.push(now);
-      store.set(key, recent);
+      store.set(key, {timestamps: recent, windowMs});
 
       if (recent.length > max) {
         const retryAfter = Math.ceil((windowMs - (now - recent[0])) / 1000);

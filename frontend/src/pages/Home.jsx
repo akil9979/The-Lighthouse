@@ -5,10 +5,11 @@ import { getReviews, createReview } from '../api/reviewApi';
 import MenuCard from '../components/MenuCard';
 import { useAuth } from '../context/AuthContext';
 import Tooltip from '../components/Tooltip';
+import ComparisonSection from '../components/ComparisonSection';
 
 const Stars = ({ rating }) => (
   <div className="stars">
-    {[1,2,3,4,5].map((s) => (
+    {[1, 2, 3, 4, 5].map((s) => (
       <span key={s} className={s <= rating ? 'star-filled' : 'star-empty'}>★</span>
     ))}
   </div>
@@ -85,8 +86,8 @@ const Home = () => {
             Fine dining with live menu availability — no surprises, only excellence.
           </p>
           <div className="hero__cta">
-            <Tooltip content="Book a table for your dining experience" position="top">
-              <Link to="/reserve" className="btn btn-primary">Reserve a Table</Link>
+            <Tooltip content="Start your reservation for tonight" position="top">
+              <Link to="/reserve#reservation-form" className="btn btn-primary">Reserve Table</Link>
             </Tooltip>
             <Tooltip content="Explore our live menu with real-time availability" position="top">
               <Link to="/menu" className="btn btn-outline">Explore Menu</Link>
@@ -99,34 +100,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Problem / Solution Section */}
-      <section className="section problem-section">
-        <div className="container">
-          <div className="problem-cards">
-            <div className="problem-card problem-card--before">
-              <div className="problem-icon">😤</div>
-              <h3>Other Restaurant Apps</h3>
-              <ul>
-                <li>Static menus — no real-time updates</li>
-                <li>Book a table, then discover dishes are sold out</li>
-                <li>No dietary profile — filter resets every visit</li>
-                <li>Zero insight into tonight's special</li>
-              </ul>
-            </div>
-            <div className="problem-divider">VS</div>
-            <div className="problem-card problem-card--after">
-              <div className="problem-icon">✨</div>
-              <h3>The Lighthouse</h3>
-              <ul>
-                <li><span className="gold">Live availability</span> — dishes toggle in real-time</li>
-                <li>See tonight's menu <span className="gold">during your booking</span></li>
-                <li>Dietary profile <span className="gold">saved to your account</span></li>
-                <li>Admin panel — no code changes needed</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Reconstructed Comparison / USP Section */}
+      <ComparisonSection />
 
       {/* Chef's Specials */}
       <section className="section">
@@ -178,9 +153,9 @@ const Home = () => {
               With over two decades of culinary artistry, our executive chef crafts every dish from locally sourced, seasonal ingredients.
               The live menu reflects what's freshest today — not yesterday's printed card.
             </p>
-            <Tooltip content="Book your dining experience with us" position="top">
-              <Link to="/reserve" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
-                Book Your Experience
+            <Tooltip content="Explore our menu before you dine with us" position="top">
+              <Link to="/menu" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
+                Explore the Menu
               </Link>
             </Tooltip>
           </div>
@@ -231,7 +206,7 @@ const Home = () => {
             <form onSubmit={handleReviewSubmit} className="review-submit-form glass" style={{ marginTop: 'var(--space-md)' }}>
               {formError && <p className="form-error-msg">⚠️ {formError}</p>}
               {formSuccess && <p className="form-success-msg">✨ Review submitted successfully!</p>}
-              
+
               <div className="form-group">
                 <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rating</label>
                 <div className="star-rating-input">
@@ -285,14 +260,14 @@ const Home = () => {
       {/* CTA Section */}
       <section className="section cta-section">
         <div className="container cta-inner">
-          <span className="section-label">Reserve Your Evening</span>
+          <span className="section-label">Tonight at The Lighthouse</span>
           <h2 className="section-title">Ready for an Unforgettable Meal?</h2>
           <p className="section-subtitle" style={{ margin: '1rem auto' }}>
-            Check tonight's live menu, pick your time slot, and walk in knowing exactly what to expect.
+            Explore tonight's live menu, then reserve your table for the perfect evening.
           </p>
-          <Tooltip content="Book your table for an unforgettable dining experience" position="top">
-            <Link to="/reserve" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
-              Make a Reservation
+          <Tooltip content="View the live menu before reserving your table" position="top">
+            <Link to="/menu" className="btn btn-primary" style={{ marginTop: 'var(--space-lg)' }}>
+              Explore the Menu
             </Link>
           </Tooltip>
         </div>
@@ -300,26 +275,31 @@ const Home = () => {
 
       <style>{`
         .hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+        .hero::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          height: 150px;
+          background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(26, 23, 20, 0.25) 30%,
+            rgba(26, 23, 20, 0.75) 70%,
+            var(--color-bg) 100%
+          );
+          pointer-events: none;
+          z-index: 2;
+        }
         .hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.05); transition: transform 8s ease; }
         .hero:hover .hero__bg { transform: scale(1); }
         .hero__overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(26,23,20,0.85) 0%, rgba(26,23,20,0.5) 100%); }
-        .hero__content { position: relative; z-index: 1; max-width: 680px; padding-top: var(--navbar-h); }
+        .hero__content { position: relative; z-index: 3; max-width: 680px; padding-top: var(--navbar-h); }
         .hero__title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 300; color: var(--color-text); line-height: 1.1; margin: 1rem 0; }
         .hero__subtitle { font-size: 1.1rem; color: var(--color-text-muted); margin-bottom: var(--space-xl); max-width: 500px; }
         .hero__cta { display: flex; gap: var(--space-md); flex-wrap: wrap; }
         .hero__feature-pill { display: inline-flex; align-items: center; gap: 8px; margin-top: var(--space-xl); padding: 0.5rem 1rem; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.25); border-radius: var(--radius-full); font-size: 0.78rem; color: var(--color-text-muted); }
-
-        .problem-section { background: var(--color-bg-elevated); }
-        .problem-cards { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--space-xl); }
-        .problem-card { padding: var(--space-xl); border-radius: var(--radius-lg); }
-        .problem-card--before { background: rgba(224,92,92,0.06); border: 1px solid rgba(224,92,92,0.15); }
-        .problem-card--after  { background: rgba(201,169,98,0.06); border: 1px solid var(--color-border); }
-        .problem-icon { font-size: 2rem; margin-bottom: var(--space-md); }
-        .problem-card h3 { font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: var(--space-md); }
-        .problem-card ul { display: flex; flex-direction: column; gap: 0.6rem; }
-        .problem-card li { font-size: 0.88rem; color: var(--color-text-muted); padding-left: 1rem; position: relative; }
-        .problem-card li::before { content: '—'; position: absolute; left: 0; color: var(--color-text-faint); }
-        .problem-divider { font-family: var(--font-serif); font-size: 1.5rem; color: var(--color-primary); font-style: italic; white-space: nowrap; }
 
         .chef-section { background: var(--color-bg-elevated); }
         .chef-inner { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3xl); align-items: center; }
@@ -383,8 +363,6 @@ const Home = () => {
         }
 
         @media (max-width: 768px) {
-          .problem-cards { grid-template-columns: 1fr; }
-          .problem-divider { text-align: center; }
           .chef-inner { grid-template-columns: 1fr; }
         }
       `}</style>

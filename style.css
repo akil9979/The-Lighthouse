@@ -788,6 +788,13 @@ body.light-theme .clicktoscroll {
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55), 0 2px 16px rgba(0, 0, 0, 0.35);
 }
 
+/* Makes the scroll CTA elements appear interactive */
+.clicktoscroll,
+.scroll-indicator,
+.scroll-arrow {
+  cursor: pointer;
+}
+
 body.light-theme .scroll-indicator {
   background: linear-gradient(to bottom, #e5e2df, transparent);
 }
@@ -1148,18 +1155,46 @@ body.light-theme .scroll-arrow {
   gap: 20px;
   align-items: center;
 }
+.search-result-count {
+  text-align: center;
+  margin: 12px 0 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
+}
 
 .menu-search {
   width: 100%;
   max-width: 500px;
-  padding: 14px 18px;
+padding: 14px 48px 14px 18px;
   border: 1px solid var(--color-border);
   background-color: var(--color-bg-card);
   color: var(--color-text);
   border-radius: 4px;
   font-size: 1rem;
 }
+.clear-search-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: none;
+  transition: color 0.2s ease;
+}
 
+.clear-search-btn:hover {
+  color: var(--color-primary);
+}
+
+.clear-search-btn.visible {
+  display: block;
+}
 .menu-search:focus {
   outline: none;
   border-color: var(--color-primary);
@@ -2020,7 +2055,13 @@ body.light-theme .time-slot-btn.limited .availability {
   gap: 28px;
   margin-bottom: 72px;
 }
-
+.review-count {
+  text-align: center;
+  margin: 12px 0 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
 .reviews-empty {
   grid-column: 1 / -1;
   text-align: center;
@@ -2123,7 +2164,13 @@ legend{
   gap: 4px;
   padding: 6px 0;
 }
-
+.selected-rating-text {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
 .star-btn {
   background: none;
   border: none;
@@ -2298,7 +2345,7 @@ legend{
 .newsletter-form input {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--color-border);
-  padding: 14px 18px;
+  padding: 14px 48px 14px 18px;
   color: var(--color-text);
   border-radius: 40px;
   outline: none;

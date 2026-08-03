@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
 const User = require('../models/User');
 const Table = require('../models/Table');
 const MenuItem = require('../models/MenuItem');
 const Review = require('../models/Review');
-
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const menuItems = [
   // ── Breakfast ──
@@ -20,7 +20,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Idli_Sambar.jpg',
     preparationTime: 15,
-    sortOrder: 1
+    sortOrder: 1,
+    calories: 220,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   },
   {
     name: 'Masala Dosa',
@@ -33,7 +36,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/MasalaDosa.jpg',
     preparationTime: 20,
-    sortOrder: 2
+    sortOrder: 2,
+    calories: 310,
+    workoutTags: ['Light & Fresh'],
+    badge: 'Bestseller'
   },
   {
     name: 'Chicken Keema Dosa',
@@ -46,7 +52,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Chicken_Keema_Dosa.jpg',
     preparationTime: 25,
-    sortOrder: 3
+    sortOrder: 3,
+    calories: 430,
+    workoutTags: ['Post-Workout Fuel'],
+    badge: null
   },
   // ── Lunch ──
   {
@@ -60,7 +69,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Paneer_Butter_Masala.jpg',
     preparationTime: 25,
-    sortOrder: 1
+    sortOrder: 1,
+    calories: 520,
+    workoutTags: ['Indulgent'],
+    badge: "Chef's Pick"
   },
   {
     name: 'Butter Chicken',
@@ -73,7 +85,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Butter_Chicken.jpg',
     preparationTime: 30,
-    sortOrder: 2
+    sortOrder: 2,
+    calories: 590,
+    workoutTags: ['Post-Workout Fuel'],
+    badge: 'Bestseller'
   },
   {
     name: 'Hyderabadi Chicken Biryani',
@@ -86,7 +101,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Hyderabadi_Chicken_Biryani.jpg',
     preparationTime: 45,
-    sortOrder: 3
+    sortOrder: 3,
+    calories: 640,
+    workoutTags: ['Post-Workout Fuel'],
+    badge: "Chef's Pick"
   },
   // ── Dinner ──
   {
@@ -98,9 +116,12 @@ const menuItems = [
     allergens: ['dairy'],
     tags: ['chef-special'],
     isAvailable: true,
-    image: '/images/dinner.jpg',
+    image: '/images/Paneer_Tikka_Masala.jpg',
     preparationTime: 30,
-    sortOrder: 1
+    sortOrder: 1,
+    calories: 480,
+    workoutTags: ['Post-Workout Fuel'],
+    badge: null
   },
   {
     name: 'Coastal Fish Curry',
@@ -111,9 +132,12 @@ const menuItems = [
     allergens: ['fish'],
     tags: ['seasonal', 'chef-special'],
     isAvailable: true,
-    image: '/images/dinner.jpg',
+    image: '/images/Coastal_Fish_Curry.jpg',
     preparationTime: 35,
-    sortOrder: 2
+    sortOrder: 2,
+    calories: 410,
+    workoutTags: ['Post-Workout Fuel'],
+    badge: null
   },
   {
     name: 'Dal Makhani',
@@ -124,9 +148,12 @@ const menuItems = [
     allergens: ['dairy'],
     tags: ['popular'],
     isAvailable: true,
-    image: '/images/dinner.jpg',
+    image: '/images/Dal_Makhani.jpg',
     preparationTime: 40,
-    sortOrder: 3
+    sortOrder: 3,
+    calories: 380,
+    workoutTags: ['Indulgent'],
+    badge: null
   },
   // ── Desserts ──
   {
@@ -140,7 +167,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Gulab_Jamun.jpg',
     preparationTime: 10,
-    sortOrder: 1
+    sortOrder: 1,
+    calories: 300,
+    workoutTags: ['Indulgent'],
+    badge: 'Bestseller'
   },
   {
     name: 'Kulfi',
@@ -153,7 +183,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Kulfi.jpg',
     preparationTime: 5,
-    sortOrder: 2
+    sortOrder: 2,
+    calories: 270,
+    workoutTags: ['Indulgent'],
+    badge: null
   },
   {
     name: 'Rasmalai',
@@ -166,7 +199,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Rasmalai.jpg',
     preparationTime: 10,
-    sortOrder: 3
+    sortOrder: 3,
+    calories: 260,
+    workoutTags: ['Indulgent'],
+    badge: null
   },
   // ── Drinks ──
   {
@@ -180,7 +216,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Mango_Lassi.jpg',
     preparationTime: 5,
-    sortOrder: 1
+    sortOrder: 1,
+    calories: 210,
+    workoutTags: ['Pre-Workout Energy'],
+    badge: null
   },
   {
     name: 'Masala Chai',
@@ -193,7 +232,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Masala_Chai.jpg',
     preparationTime: 5,
-    sortOrder: 2
+    sortOrder: 2,
+    calories: 90,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   },
   {
     name: 'Fresh Lime Soda',
@@ -206,7 +248,10 @@ const menuItems = [
     isAvailable: true,
     image: '/images/Fresh_Lime_Soda.jpg',
     preparationTime: 3,
-    sortOrder: 3
+    sortOrder: 3,
+    calories: 60,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   },
   {
     name: 'Virgin Mojito',
@@ -217,9 +262,12 @@ const menuItems = [
     allergens: [],
     tags: [],
     isAvailable: true,
-    image: '/images/drinks.jpg',
+    image: '/images/Virgin_Mojito.jpg',
     preparationTime: 5,
-    sortOrder: 4
+    sortOrder: 4,
+    calories: 70,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   },
   {
     name: 'Filter Coffee',
@@ -230,9 +278,12 @@ const menuItems = [
     allergens: ['dairy'],
     tags: ['popular'],
     isAvailable: true,
-    image: '/images/drinks.jpg',
+    image: '/images/Filter_Coffee.jpg',
     preparationTime: 5,
-    sortOrder: 5
+    sortOrder: 5,
+    calories: 85,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   },
   {
     name: 'Kokum Sharbat',
@@ -243,9 +294,12 @@ const menuItems = [
     allergens: [],
     tags: ['seasonal', 'new'],
     isAvailable: true,
-    image: '/images/drinks.jpg',
+    image: '/images/Kokum_Sharbat.jpg',
     preparationTime: 3,
-    sortOrder: 6
+    sortOrder: 6,
+    calories: 50,
+    workoutTags: ['Light & Fresh'],
+    badge: null
   }
 ];
 
@@ -296,10 +350,14 @@ const seedData = async () => {
     console.log('🪑 Tables seeded:', tables.length);
 
     // Seed menu items
+    // Note: rating, reviewCount, and orderCount are NOT set here —
+    // they use the schema defaults (0) and populate dynamically as
+    // real reviews/orders come in through the app.
     const menu = await MenuItem.create(menuItems);
     console.log('🍽️  Menu items seeded:', menu.length);
 
-    // Seed sample reviews
+    // Seed sample reviews (restaurant-level, not tied to a specific dish —
+    // see PR notes on Review model scope)
     const reviews = await Review.create([
       {
         user: users[1]._id,

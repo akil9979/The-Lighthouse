@@ -155,6 +155,20 @@ function smoothScroll(e) {
   closeMobileMenu();
 }
 
+function scrollToSection(selector) {
+  const target = document.querySelector(selector);
+  if (!target) return;
+
+  const prefersReduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  window.scrollTo({
+    top: target.offsetTop - 80,
+    behavior: prefersReduced ? "auto" : "smooth",
+  });
+}
+
 function toggleMobileMenu() {
   if (!navToggle || !navMenu) return;
   navToggle.classList.toggle("active");
@@ -1099,6 +1113,38 @@ function updateCartQty(id, delta) {
   cart = cart.filter(c => c.qty > 0);
   saveStoredList("lighthouse_cart", cart);
   renderOrderState();
+}
+// Reservation Summary
+function updateReservationSummary() {
+  const name = document.getElementById("name");
+  const date = document.getElementById("reservation-date");
+  const time = document.getElementById("time");
+  const guests = document.getElementById("guests");
+
+  const summaryName = document.getElementById("summary-name");
+  const summaryDate = document.getElementById("summary-date");
+  const summaryTime = document.getElementById("summary-time");
+  const summaryGuests = document.getElementById("summary-guests");
+
+  if (
+    !name ||
+    !date ||
+    !time ||
+    !guests ||
+    !summaryName ||
+    !summaryDate ||
+    !summaryTime ||
+    !summaryGuests
+  ) {
+    return;
+  }
+
+  summaryName.textContent = name.value || "-";
+  summaryDate.textContent = date.value || "-";
+  summaryTime.textContent =
+    time.options[time.selectedIndex]?.text || "-";
+  summaryGuests.textContent =
+    guests.options[guests.selectedIndex]?.text || "-";
 }
 
 function removeFavorite(id) {
@@ -2059,7 +2105,24 @@ function setupReservationModal() {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const name = document.getElementById("modal-name")?.value.trim();
-      const email = document.getElementById("modal-email")?.value.trim();
+      const emailField = document.getElementById("modal-email");
+      if (!(emailField instanceof HTMLInputElement)) {
+        return;
+      }
+      if (!emailField.checkValidity()) {
+        emailField.reportValidity();
+        return;
+      }
+      const email = emailField?.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+          addError(
+              emailField,
+              typeof i18next !== "undefined" && i18next.t
+                  ? i18next.t("reservation.email_error")
+                  : "Please enter a valid email address."
+          );
+          return;
+      }
       const phone = document.getElementById("modal-phone")?.value.trim();
       const guests = document.getElementById("modal-guests")?.value || "2";
       const date = document.getElementById("modal-date")?.value;
@@ -2427,6 +2490,14 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener("click", smoothScroll);
   });
 
+  document
+  .querySelectorAll(".clicktoscroll, .scroll-indicator, .scroll-arrow")
+  .forEach((element) => {
+    element.addEventListener("click", () => {
+      scrollToSection("#about");
+    });
+  });
+
   filterBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       filterBtns.forEach((item) => item.classList.remove("active"));
@@ -2502,4 +2573,33 @@ document.addEventListener('DOMContentLoaded', () => {
       if (c) attachSkeletonToSimpleImage(c, 360);
     });
   }
+
+  const phoneInput = document.getElementById('modal-phone');
+const phoneError = document.getElementById('phone-error');
+
+phoneInput.addEventListener('input', () => {
+    // 1. Remove non-numeric characters without slicing at 10 digits
+    phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+    const val = phoneInput.value;
+
+    // 2. Show the error if the length exceeds 10 OR if it's incomplete on input
+    // If you only want the error to appear when they typed *more* than 10 digits while typing:
+    if (val.length > 10) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    } else {
+        phoneError.style.display = 'none';
+        phoneInput.style.borderColor = '';
+    }
+});
+
+// 3. Keep the blur listener to catch cases where they typed FEWER than 10 digits and left the field
+phoneInput.addEventListener('blur', () => {
+    const isValid = /^\d{10}$/.test(phoneInput.value);
+    if (!isValid && phoneInput.value.length > 0) {
+        phoneError.style.display = 'block';
+        phoneInput.style.borderColor = 'red';
+    }
+});
 });

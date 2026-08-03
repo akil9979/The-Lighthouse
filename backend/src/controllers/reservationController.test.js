@@ -64,6 +64,9 @@ describe('reservationController - createReservation', () => {
       specialRequests: '',
       status: 'confirmed'
     });
+    Reservation.findById.mockReturnValue({
+      populate: jest.fn().mockReturnThis()
+    });
 
     emailService.sendReservationConfirmation.mockResolvedValue();
 
@@ -95,6 +98,9 @@ describe('reservationController - createReservation', () => {
     Reservation.create.mockResolvedValue({
       _id: 'res123',
       specialRequests: 'a'.repeat(500)
+    });
+    Reservation.findById.mockReturnValue({
+      populate: jest.fn().mockReturnThis()
     });
 
     emailService.sendReservationConfirmation.mockResolvedValue();

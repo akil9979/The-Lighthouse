@@ -1,0 +1,533 @@
+/* =========================================
+   THE LIGHTHOUSE — The Difference Section
+   Luxury Editorial Experience Transformation
+   Aman Resorts × Michelin Guide Aesthetic (Pass 2)
+   ========================================= */
+
+.lh-difference-section {
+  position: relative;
+  background-color: var(--color-bg);
+  padding: 3.5rem 0 9rem 0;
+  margin-top: 0;
+  overflow: hidden;
+  color: var(--color-text);
+}
+
+/* Atmospheric Ambient Lighting — subtle amber continuity from hero */
+.lh-diff-bg-ambient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 520px;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(201, 169, 98, 0.045) 0%,
+    rgba(168, 136, 63, 0.02) 45%,
+    rgba(26, 23, 20, 0.005) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Soft Warm Radial Illumination (Right / Lighthouse side only) */
+.lh-diff-glow-right {
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  width: 700px;
+  height: 700px;
+  transform: translateY(-45%);
+  background: radial-gradient(
+    circle at center,
+    rgba(201, 169, 98, 0.045) 0%,
+    rgba(201, 169, 98, 0.01) 55%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Section Container — Strong, expansive width (70–78% desktop viewport) */
+.lh-diff-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Section Editorial Header ── */
+.lh-diff-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 5rem auto;
+}
+
+.lh-diff-eyebrow {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.72rem; /* 11.5px */
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 1.2rem;
+}
+
+.lh-diff-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 4.2vw, 4.25rem); /* ~48px to 68px */
+  font-weight: 300;
+  color: var(--color-text);
+  line-height: 1.12;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.015em;
+}
+
+.lh-diff-title em {
+  font-style: italic;
+  color: var(--color-primary-light);
+  font-weight: 300;
+}
+
+.lh-diff-subtitle {
+  font-family: var(--font-sans);
+  font-size: 1.05rem; /* ~16.8px */
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  max-width: 560px;
+  margin: 0 auto 1.8rem auto;
+}
+
+/* Minimal Live Status Indicator (No pill, no border, pure typography + dot) */
+.lh-diff-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.lh-diff-live-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(76, 175, 125, 0.7);
+  animation: pulseLiveDot 2.8s infinite ease-in-out;
+}
+
+.lh-diff-live-text {
+  font-family: var(--font-sans);
+  font-size: 0.68rem; /* 11px */
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@keyframes pulseLiveDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+/* ── Transformation Journey Flow ── */
+.lh-diff-journey {
+  position: relative;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Top Column Headers (Appears ONCE at the top) */
+.lh-diff-col-headers {
+  display: grid;
+  grid-template-columns: 1.15fr 90px 1.35fr;
+  align-items: center;
+  padding-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.lh-col-head {
+  font-family: var(--font-sans);
+  font-size: 0.72rem; /* 11.5px */
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.lh-col-head.left-head {
+  color: var(--color-text-faint);
+  text-align: right;
+  padding-right: 3rem;
+}
+
+.lh-col-head.right-head {
+  color: var(--color-primary-light);
+  text-align: left;
+  padding-left: 3rem;
+}
+
+/* Continuous Central Axis Line */
+.lh-diff-timeline-axis {
+  position: absolute;
+  top: 3.5rem;
+  bottom: 9.5rem;
+  left: calc(1.15fr / (1.15fr + 90px + 1.35fr) * 100% + 45px); /* Positioned exactly in middle column */
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(201, 169, 98, 0.05) 0%,
+    rgba(201, 169, 98, 0.35) 20%,
+    rgba(201, 169, 98, 0.35) 80%,
+    rgba(201, 169, 98, 0.05) 100%
+  );
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Moments Container */
+.lh-diff-moments {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+/* Individual Moment Row — Generous 90–125px breathing room */
+.lh-diff-moment-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 90px 1.35fr;
+  align-items: center;
+  padding: 3.25rem 0; /* ~104px vertical height */
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+
+/* Subtle row hover glow overlay */
+.lh-diff-moment-hover-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 169, 98, 0.015) 30%,
+    rgba(201, 169, 98, 0.04) 65%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  border-radius: var(--radius-md);
+}
+
+.lh-diff-moment-row:hover .lh-diff-moment-hover-bg {
+  opacity: 1;
+}
+
+/* ── Left Column: Conventional Experience ── */
+.lh-diff-left-col {
+  padding-right: 3rem;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lh-diff-usual-text {
+  font-family: var(--font-sans);
+  font-size: clamp(1.08rem, 1.4vw, 1.25rem); /* ~18–20px */
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  max-width: 380px;
+  transition: color 0.35s ease;
+}
+
+.lh-diff-moment-row:hover .lh-diff-usual-text {
+  color: var(--color-text);
+}
+
+/* ── Central Axis Node & Arrow ── */
+.lh-diff-axis-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+}
+
+.lh-diff-node-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1px solid rgba(201, 169, 98, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.lh-diff-node-num {
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.lh-diff-indicator-arrow {
+  position: absolute;
+  left: calc(50% + 22px);
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+  opacity: 0.45;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.lh-diff-indicator-arrow svg {
+  width: 22px;
+  height: 10px;
+  stroke: var(--color-primary);
+}
+
+.lh-diff-moment-row:hover .lh-diff-node-circle {
+  border-color: var(--color-primary);
+  background: rgba(34, 31, 27, 0.95);
+  box-shadow: 0 0 20px rgba(201, 169, 98, 0.3);
+  transform: scale(1.08);
+}
+
+.lh-diff-moment-row:hover .lh-diff-indicator-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ── Right Column: The Lighthouse Experience ── */
+.lh-diff-right-col {
+  padding-left: 3rem;
+  text-align: left;
+}
+
+.lh-diff-lh-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.45rem, 2.3vw, 1.8rem); /* ~23–29px */
+  font-weight: 300;
+  color: var(--color-text);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  transition: transform 0.35s ease, color 0.35s ease;
+}
+
+.lh-diff-lh-text em {
+  font-style: italic;
+  color: var(--color-primary-light);
+  font-weight: 400;
+  transition: color 0.35s ease, text-shadow 0.35s ease;
+}
+
+.lh-diff-moment-row:hover .lh-diff-lh-text {
+  transform: translateX(3px);
+  color: #ffffff;
+}
+
+.lh-diff-moment-row:hover .lh-diff-lh-text em {
+  color: #fde6b3;
+  text-shadow: 0 0 16px rgba(201, 169, 98, 0.35);
+}
+
+/* ── Bottom Closing Editorial Footer ── */
+.lh-diff-footer {
+  margin-top: 5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.lh-diff-footer-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201, 169, 98, 0.4), transparent);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.lh-diff-footer-diamond {
+  width: 5px;
+  height: 5px;
+  background-color: var(--color-primary);
+  transform: rotate(45deg);
+}
+
+.lh-diff-footer-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.68rem; /* 11px */
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-bottom: 0.6rem;
+}
+
+.lh-diff-footer-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-primary-light);
+  letter-spacing: -0.01em;
+}
+
+/* ── Responsive Rules ── */
+@media (max-width: 1024px) {
+  .lh-diff-container {
+    padding: 0 1.5rem;
+  }
+
+  .lh-diff-header {
+    margin-bottom: 4rem;
+  }
+
+  .lh-diff-col-headers,
+  .lh-diff-moment-row {
+    grid-template-columns: 1fr 70px 1.2fr;
+  }
+
+  .lh-diff-left-col {
+    padding-right: 1.8rem;
+  }
+
+  .lh-diff-right-col {
+    padding-left: 1.8rem;
+  }
+
+  .lh-diff-timeline-axis {
+    left: calc(1fr / (1fr + 70px + 1.2fr) * 100% + 35px);
+  }
+}
+
+/* ── Mobile Layout (<768px): Vertical Narrative Sequence ── */
+@media (max-width: 767px) {
+  .lh-difference-section {
+    padding: 5rem 0 6rem 0;
+  }
+
+  .lh-diff-container {
+    padding: 0 1.25rem;
+  }
+
+  .lh-diff-header {
+    margin-bottom: 3rem;
+  }
+
+  .lh-diff-subtitle {
+    font-size: 0.96rem;
+    margin-bottom: 1.4rem;
+  }
+
+  /* Hide Desktop Column Headers and Central Timeline Axis */
+  .lh-diff-col-headers,
+  .lh-diff-timeline-axis,
+  .lh-diff-indicator-arrow {
+    display: none;
+  }
+
+  .lh-diff-moments {
+    gap: 2.5rem;
+  }
+
+  /* Single Column Mobile Card Sequence */
+  .lh-diff-moment-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.5rem;
+    background: rgba(34, 31, 27, 0.45);
+    border: 1px solid rgba(201, 169, 98, 0.12);
+    border-radius: var(--radius-lg);
+    gap: 1.25rem;
+  }
+
+  .lh-diff-left-col {
+    padding-right: 0;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .lh-diff-usual-text {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+
+  .lh-diff-right-col {
+    padding-left: 0;
+  }
+
+  .lh-diff-lh-text {
+    font-size: 1.35rem;
+    line-height: 1.4;
+  }
+
+  /* Mobile Section Headers inside Card */
+  .lh-diff-left-col::before {
+    content: "THE CONVENTIONAL WAY";
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+    margin-bottom: 0.4rem;
+  }
+
+  .lh-diff-right-col::before {
+    content: "WITH THE LIGHTHOUSE";
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-primary-light);
+    margin-bottom: 0.4rem;
+  }
+
+  .lh-diff-axis-node {
+    align-self: flex-start;
+  }
+
+  .lh-diff-footer {
+    margin-top: 3.5rem;
+  }
+}
+
+/* ── Motion & Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .lh-diff-live-dot {
+    animation: none;
+  }
+
+  .lh-diff-moment-row,
+  .lh-diff-node-circle,
+  .lh-diff-indicator-arrow,
+  .lh-diff-lh-text,
+  .lh-diff-usual-text {
+    transition: none !important;
+  }
+}
