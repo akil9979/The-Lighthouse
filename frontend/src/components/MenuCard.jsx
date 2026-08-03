@@ -4,10 +4,9 @@ import { getReviews } from '../api/reviewApi';
 import { useMenu } from '../context/MenuContext';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { useEffect, useState } from 'react';
 import { useReservation } from '../context/ReservationContext';
-import { useEffect, useState, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Tooltip from './Tooltip';
 
 const TAG_LABELS = {
@@ -37,20 +36,22 @@ const MenuCard = ({ item }) => {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { reservationDetails, preOrder, addToPreOrder, updatePreOrderQuantity, hasActiveBookingDetails } = useReservation();
+  const { preOrder, addToPreOrder, updatePreOrderQuantity, hasActiveBookingDetails } = useReservation();
+
   const [toggling, setToggling] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [dishReviews, setDishReviews] = useState([]);
   const [relatedItems, setRelatedItems] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  // Toppings / variant customization
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedVariant, setSelectedVariant] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
 
   // Cooking Request customization state (per open modal instance)
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [customInstructions, setCustomInstructions] = useState('');
+
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -60,7 +61,7 @@ const MenuCard = ({ item }) => {
   const itemId = item._id || item.id;
 
   const preOrderItem = preOrder.find(p => (p.menuItem._id || p.menuItem.id) === itemId);
-  const quantity = preOrderItem ? preOrderItem.quantity : 0;
+  const preOrderQty = preOrderItem ? preOrderItem.quantity : 0;
 
   const handlePreOrderAction = (event) => {
     event.stopPropagation();
@@ -74,12 +75,12 @@ const MenuCard = ({ item }) => {
 
   const handleIncrement = (event) => {
     event.stopPropagation();
-    updatePreOrderQuantity(itemId, quantity + 1);
+    updatePreOrderQuantity(itemId, preOrderQty + 1);
   };
 
   const handleDecrement = (event) => {
     event.stopPropagation();
-    updatePreOrderQuantity(itemId, quantity - 1);
+    updatePreOrderQuantity(itemId, preOrderQty - 1);
   };
 
   // Owner-configured options win if present on the item; otherwise fall
@@ -91,7 +92,7 @@ const MenuCard = ({ item }) => {
   const allowCustomInstructions = item.allowCustomInstructions !== false;
   const maxInstructionsLength = item.customInstructionsMaxLength || DEFAULT_MAX_INSTRUCTIONS_LENGTH;
 
-  const hasCustomizations =
+  const hasToppingsOrVariants =
     (item.customizations?.toppings?.length > 0) || (item.customizations?.variants?.length > 0);
 
   useEffect(() => {
@@ -110,8 +111,11 @@ const MenuCard = ({ item }) => {
     if (!isOpen) return;
     setSelectedToppings([]);
     setSelectedVariant(item.customizations?.variants?.[0] || null);
+    setSelectedOptions([]);
+    setCustomInstructions('');
     setQuantity(1);
     setJustAdded(false);
+    setAddError(null);
   }, [isOpen, item._id]);
 
   useEffect(() => {
@@ -169,6 +173,7 @@ const MenuCard = ({ item }) => {
     setIsOpen(false);
     setSelectedOptions([]);
     setCustomInstructions('');
+    setSelectedToppings([]);
     setQuantity(1);
     setAddError(null);
   };
@@ -179,6 +184,21 @@ const MenuCard = ({ item }) => {
     );
   };
 
+  const toggleTopping = (topping) => {
+    setSelectedToppings((prev) => {
+      const exists = prev.some((t) => t.name === topping.name);
+      if (exists) return prev.filter((t) => t.name !== topping.name);
+      if (item.customizations?.allowMultipleToppings === false) return [topping];
+      return [...prev, topping];
+    });
+  };
+
+  // ---- Pricing ----
+  const toppingsTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
+  const variantModifier = selectedVariant?.priceModifier || 0;
+  const unitPrice = item.price + toppingsTotal + variantModifier;
+  const finalPrice = unitPrice * quantity;
+
   const handleAddToCart = async (event) => {
     event.stopPropagation();
     if (!item.isAvailable) return;
@@ -188,14 +208,21 @@ const MenuCard = ({ item }) => {
     try {
       await addToCart(item, {
         quantity,
+        unitPrice,
+        selectedToppings,
+        selectedVariant,
         selectedCookingOptions: selectedOptions,
         customInstructions
       });
 
       setJustAdded(true);
-      setTimeout(() => setJustAdded(false), 1600);
+      setTimeout(() => {
+        setJustAdded(false);
+        setIsOpen(false);
+      }, 900);
       setSelectedOptions([]);
       setCustomInstructions('');
+      setSelectedToppings([]);
       setQuantity(1);
     } catch (err) {
       setAddError(err.response?.data?.error || 'Could not add this to your cart. Please try again.');
@@ -209,41 +236,10 @@ const MenuCard = ({ item }) => {
     event.stopPropagation();
     if (!item.isAvailable) return;
     try {
-      await addToCart(item, { quantity: 1 });
+      await addToCart(item, { quantity: 1, unitPrice: item.price });
     } catch (err) {
       console.error('Quick add failed', err);
     }
-  };
-
-  // ---- Customization logic ----
-  const toppingsTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
-  const variantModifier = selectedVariant?.priceModifier || 0;
-  const unitPrice = item.price + toppingsTotal + variantModifier;
-  const finalPrice = unitPrice * quantity;
-
-  const toggleTopping = (topping) => {
-    setSelectedToppings((prev) => {
-      const exists = prev.some((t) => t.name === topping.name);
-      if (exists) return prev.filter((t) => t.name !== topping.name);
-      if (item.customizations?.allowMultipleToppings === false) return [topping];
-      return [...prev, topping];
-    });
-  };
-
-  const handleAddToCart = (event) => {
-    event.stopPropagation();
-    addToCart({
-      menuItemId: item._id,
-      name: item.name,
-      image: item.image,
-      basePrice: item.price,
-      selectedToppings,
-      selectedVariant,
-      quantity,
-      unitPrice
-    });
-    setJustAdded(true);
-    setTimeout(() => setIsOpen(false), 700);
   };
 
   return (
@@ -311,6 +307,25 @@ const MenuCard = ({ item }) => {
               + Add
             </button>
           </Tooltip>
+
+          <div className="menu-card__preorder-row" onClick={(event) => event.stopPropagation()}>
+            {preOrderQty > 0 ? (
+              <div className="preorder-controls">
+                <button type="button" className="preorder-btn" onClick={handleDecrement} aria-label="Decrease pre-order quantity">−</button>
+                <span className="preorder-qty">{preOrderQty} added for your reservation</span>
+                <button type="button" className="preorder-btn" onClick={handleIncrement} aria-label="Increase pre-order quantity">+</button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-secondary btn-preorder"
+                onClick={handlePreOrderAction}
+                disabled={!item.isAvailable}
+              >
+                Pre-order for Reservation
+              </button>
+            )}
+          </div>
 
           {isAdmin && (
             <div className="menu-card__admin" onClick={(event) => event.stopPropagation()}>
@@ -638,7 +653,7 @@ const MenuCard = ({ item }) => {
               </div>
 
               <div className="menu-card-detail__customize" onClick={(event) => event.stopPropagation()}>
-                {hasCustomizations && <h4>Customize your dish</h4>}
+                {hasToppingsOrVariants && <h4>Customize your dish</h4>}
 
                 {item.customizations?.variants?.length > 0 && (
                   <div className="customize__group">
@@ -679,6 +694,39 @@ const MenuCard = ({ item }) => {
                   </div>
                 )}
 
+                <div className="cooking-request">
+                  <h4 className="cooking-request__heading">Cooking request</h4>
+                  <p className="cooking-request__hint">Let the kitchen know how you'd like it prepared.</p>
+                  <div className="cooking-request__options">
+                    {cookingOptions.map((option) => (
+                      <button
+                        type="button"
+                        key={option}
+                        className={`cooking-request__chip ${selectedOptions.includes(option) ? 'cooking-request__chip--active' : ''}`}
+                        onClick={() => toggleCookingOption(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+
+                  {allowCustomInstructions && (
+                    <div className="cooking-request__notes">
+                      <textarea
+                        className="cooking-request__textarea"
+                        rows={2}
+                        placeholder="Any other special instructions?"
+                        value={customInstructions}
+                        maxLength={maxInstructionsLength}
+                        onChange={(event) => setCustomInstructions(event.target.value)}
+                      />
+                      <span className="cooking-request__count">
+                        {customInstructions.length}/{maxInstructionsLength}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="customize__quantity">
                   <span className="customize__label">Quantity</span>
                   <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
@@ -691,13 +739,15 @@ const MenuCard = ({ item }) => {
                   <strong>₹{finalPrice}</strong>
                 </div>
 
+                {addError && <p className="cooking-request__error">{addError}</p>}
+
                 <button
                   type="button"
                   className="btn btn-primary customize__add-btn"
                   onClick={handleAddToCart}
-                  disabled={justAdded || !item.isAvailable}
+                  disabled={justAdded || adding || !item.isAvailable}
                 >
-                  {justAdded ? 'Added ✓' : !item.isAvailable ? 'Currently Sold Out' : `Add to Cart — ₹${finalPrice}`}
+                  {justAdded ? 'Added ✓' : !item.isAvailable ? 'Currently Sold Out' : adding ? 'Adding…' : `Add to Cart — ₹${finalPrice}`}
                 </button>
               </div>
 
