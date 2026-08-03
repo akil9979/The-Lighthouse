@@ -26,6 +26,7 @@ const Reserve = () => {
   const [loadingMenu, setLoadingMenu] = useState(false);
 
   const [specialRequests, setSpecialRequests] = useState('');
+  const [confirmationChannel, setConfirmationChannel] = useState('Email');
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -71,7 +72,7 @@ const Reserve = () => {
       return;
     }
     try {
-      await createReservation({ date, time: selectedSlot, guests, specialRequests });
+      await createReservation({ date, time: selectedSlot, guests, specialRequests, confirmationChannel });
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.error || 'Reservation failed. Please try again.');
@@ -88,7 +89,7 @@ const Reserve = () => {
           <h1 className="section-title">Reservation Confirmed!</h1>
           <p className="section-subtitle" style={{ margin: '1rem auto' }}>
             Your table is booked for <strong className="gold">{date}</strong> at <strong className="gold">{selectedSlot}</strong> for {guests} guests.
-            A confirmation email will be sent shortly.
+            A confirmation {confirmationChannel.toLowerCase() === 'email' ? 'email' : confirmationChannel.toLowerCase() === 'whatsapp' ? 'WhatsApp message' : 'SMS'} will be sent shortly.
           </p>
           <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'center', marginTop: 'var(--space-xl)' }}>
             <Tooltip content="Browse our full menu" position="top">
@@ -272,6 +273,24 @@ const Reserve = () => {
                   {specialRequests.length} / 500
                 </div>
               </div>
+              <div className="form-group" style={{ marginTop: 'var(--space-md)' }}>
+                <label className="form-label">Receive Confirmation Via</label>
+                <div className="confirmation-channel-container">
+                  {['Email', 'SMS', 'WhatsApp'].map((channel) => (
+                    <button
+                      key={channel}
+                      type="button"
+                      className={`channel-btn ${confirmationChannel === channel ? 'channel-btn--active' : ''}`}
+                      onClick={() => setConfirmationChannel(channel)}
+                    >
+                      {channel === 'Email' && '📧 '}
+                      {channel === 'SMS' && '💬 '}
+                      {channel === 'WhatsApp' && '📱 '}
+                      {channel}
+                    </button>
+                  ))}
+                </div>
+              </div>
               {error && <p className="form-error" role="alert" aria-live="assertive">{error}</p>}
               <div className="reserve-step__actions">
                 <Tooltip content="Go back to view tonight's menu" position="top">
@@ -337,6 +356,40 @@ const Reserve = () => {
           color: var(--color-text-muted);
           text-align: right;
           margin-top: 4px;
+        }
+
+        .confirmation-channel-container {
+          display: flex;
+          gap: var(--space-sm);
+          margin-top: 6px;
+        }
+
+        .channel-btn {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: var(--space-xs);
+          padding: 0.75rem 1rem;
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          border: 1px solid var(--color-border);
+          color: var(--color-text-muted);
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: all var(--transition);
+        }
+
+        .channel-btn:hover {
+          border-color: var(--color-primary);
+          color: var(--color-text);
+        }
+
+        .channel-btn--active {
+          border-color: var(--color-primary) !important;
+          background: rgba(201, 169, 98, 0.08) !important;
+          color: var(--color-primary) !important;
+          box-shadow: var(--shadow-gold);
         }
 
         @media (max-width: 600px) {
