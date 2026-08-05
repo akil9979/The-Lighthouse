@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { getAvailableSlots, createReservation } from '../api/reservationApi';
 import { getTonightMenu } from '../api/menuApi';
 import { useAuth } from '../context/AuthContext';
-import MenuCard from '../components/MenuCard';
 import Tooltip from '../components/Tooltip';
 
 const STEPS = ['Date & Guests', 'Pick a Time', "Tonight's Menu", 'Confirm'];

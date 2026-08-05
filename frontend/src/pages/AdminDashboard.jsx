@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useMenu } from '../context/MenuContext';
-import { getMenuItems, createMenuItem, deleteMenuItem } from '../api/menuApi';
+import { createMenuItem } from '../api/menuApi';
 import { getReviews, deleteReview } from '../api/reviewApi';
 import MenuCard from '../components/MenuCard';
 import Tooltip from '../components/Tooltip';
@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchMenu({ showAll: 'true' });
     getReviews().then(({ data }) => setReviews(data.data));
-  }, []);
+  }, [fetchMenu]);
 
   const stats = {
     total: items.length,
