@@ -922,7 +922,9 @@
         <div class="form-row">
           <div class="form-group">
             <label for="modal-phone" data-i18n="reservation.phone">Phone Number *</label>
-            <input type="tel" id="modal-phone" name="phone" required placeholder="10-digit number" autocomplete="tel" />
+            <input type="tel" id="modal-phone" name="phone" required placeholder="10-digit number" autocomplete="tel" pattern="[0-9]{10}" inputmode="numeric" />
+            
+<span class="error-message" id="phone-error" style="color: red; font-size: 0.85rem; display: none;">Please enter a valid 10-digit number</span>
           </div>
           <div class="form-group">
             <label for="modal-guests" data-i18n="reservation.guests">Guests *</label>

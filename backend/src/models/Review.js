@@ -32,7 +32,51 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-// One review per user (can be removed if multiple reviews per user are allowed)
-reviewSchema.index({ user: 1 }, { unique: false });
+// One review per user per menu item (can be removed if multiple reviews per user are allowed)
+reviewSchema.index({ user: 1, menuItem: 1 }, { unique: true });
+
+// Recalculates and stores average rating + review count on the linked MenuItem.
+// Only runs when a review is actually tied to a dish (menuItem is not null) —
+// general restaurant-level reviews are ignored here.
+reviewSchema.statics.calcMenuItemRating = async function (menuItemId) {
+  if (!menuItemId) return;
+
+  const MenuItem = mongoose.model('MenuItem');
+
+  const stats = await this.aggregate([
+    { $match: { menuItem: menuItemId } },
+    {
+      $group: {
+        _id: '$menuItem',
+        avgRating: { $avg: '$rating' },
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+
+  if (stats.length > 0) {
+    await MenuItem.findByIdAndUpdate(menuItemId, {
+      rating: Math.round(stats[0].avgRating * 10) / 10, // round to 1 decimal
+      reviewCount: stats[0].count
+    });
+  } else {
+    await MenuItem.findByIdAndUpdate(menuItemId, {
+      rating: 0,
+      reviewCount: 0
+    });
+  }
+};
+
+// Recalculate after a review is created or updated
+reviewSchema.post('save', function (doc) {
+  doc.constructor.calcMenuItemRating(doc.menuItem);
+});
+
+
+// Recalculate after a review is deleted via review.deleteOne()
+// (matches how deleteReview in reviewController.js removes reviews)
+reviewSchema.post('deleteOne', { document: true, query: false }, function () {
+  this.constructor.calcMenuItemRating(this.menuItem);
+});
 
 module.exports = mongoose.model('Review', reviewSchema);
