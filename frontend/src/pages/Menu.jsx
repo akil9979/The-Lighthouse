@@ -24,7 +24,7 @@ const Menu = () => {
     const params = {};
     if (user?.role === 'admin') params.showAll = 'true';
     fetchMenu(params);
-  }, [user]);
+  }, [user, fetchMenu]);
 
   const filtered = useMemo(() => {
     return items.filter((item) => {
