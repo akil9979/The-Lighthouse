@@ -4,9 +4,9 @@ import { getReviews } from '../api/reviewApi';
 import { useMenu } from '../context/MenuContext';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { useEffect, useState } from 'react';
 import { useReservation } from '../context/ReservationContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Tooltip from './Tooltip';
 
 const TAG_LABELS = {
@@ -36,16 +36,22 @@ const MenuCard = ({ item }) => {
   const { user } = useAuth();
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { reservationDetails, preOrder, addToPreOrder, updatePreOrderQuantity, hasActiveBookingDetails } = useReservation();
+  const { preOrder, addToPreOrder, updatePreOrderQuantity, hasActiveBookingDetails } = useReservation();
+
   const [toggling, setToggling] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [dishReviews, setDishReviews] = useState([]);
   const [relatedItems, setRelatedItems] = useState([]);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
+  // Toppings / variant customization
+  const [selectedToppings, setSelectedToppings] = useState([]);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+
   // Cooking Request customization state (per open modal instance)
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [customInstructions, setCustomInstructions] = useState('');
+
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
   const [adding, setAdding] = useState(false);
@@ -55,7 +61,7 @@ const MenuCard = ({ item }) => {
   const itemId = item._id || item.id;
 
   const preOrderItem = preOrder.find(p => (p.menuItem._id || p.menuItem.id) === itemId);
-  const preOrderQuantity = preOrderItem ? preOrderItem.quantity : 0;
+  const preOrderQty = preOrderItem ? preOrderItem.quantity : 0;
 
   const handlePreOrderAction = (event) => {
     event.stopPropagation();
@@ -69,12 +75,12 @@ const MenuCard = ({ item }) => {
 
   const handleIncrement = (event) => {
     event.stopPropagation();
-    updatePreOrderQuantity(itemId, preOrderQuantity + 1);
+    updatePreOrderQuantity(itemId, preOrderQty + 1);
   };
 
   const handleDecrement = (event) => {
     event.stopPropagation();
-    updatePreOrderQuantity(itemId, preOrderQuantity - 1);
+    updatePreOrderQuantity(itemId, preOrderQty - 1);
   };
 
   // Owner-configured options win if present on the item; otherwise fall
@@ -86,6 +92,9 @@ const MenuCard = ({ item }) => {
   const allowCustomInstructions = item.allowCustomInstructions !== false;
   const maxInstructionsLength = item.customInstructionsMaxLength || DEFAULT_MAX_INSTRUCTIONS_LENGTH;
 
+  const hasToppingsOrVariants =
+    (item.customizations?.toppings?.length > 0) || (item.customizations?.variants?.length > 0);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -96,6 +105,18 @@ const MenuCard = ({ item }) => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen]);
+
+  // Reset customization state fresh every time the modal opens for this item
+  useEffect(() => {
+    if (!isOpen) return;
+    setSelectedToppings([]);
+    setSelectedVariant(item.customizations?.variants?.[0] || null);
+    setSelectedOptions([]);
+    setCustomInstructions('');
+    setQuantity(1);
+    setJustAdded(false);
+    setAddError(null);
+  }, [isOpen, item._id]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -152,6 +173,7 @@ const MenuCard = ({ item }) => {
     setIsOpen(false);
     setSelectedOptions([]);
     setCustomInstructions('');
+    setSelectedToppings([]);
     setQuantity(1);
     setAddError(null);
   };
@@ -162,6 +184,21 @@ const MenuCard = ({ item }) => {
     );
   };
 
+  const toggleTopping = (topping) => {
+    setSelectedToppings((prev) => {
+      const exists = prev.some((t) => t.name === topping.name);
+      if (exists) return prev.filter((t) => t.name !== topping.name);
+      if (item.customizations?.allowMultipleToppings === false) return [topping];
+      return [...prev, topping];
+    });
+  };
+
+  // ---- Pricing ----
+  const toppingsTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
+  const variantModifier = selectedVariant?.priceModifier || 0;
+  const unitPrice = item.price + toppingsTotal + variantModifier;
+  const finalPrice = unitPrice * quantity;
+
   const handleAddToCart = async (event) => {
     event.stopPropagation();
     if (!item.isAvailable) return;
@@ -171,14 +208,21 @@ const MenuCard = ({ item }) => {
     try {
       await addToCart(item, {
         quantity,
+        unitPrice,
+        selectedToppings,
+        selectedVariant,
         selectedCookingOptions: selectedOptions,
         customInstructions
       });
 
       setJustAdded(true);
-      setTimeout(() => setJustAdded(false), 1600);
+      setTimeout(() => {
+        setJustAdded(false);
+        setIsOpen(false);
+      }, 900);
       setSelectedOptions([]);
       setCustomInstructions('');
+      setSelectedToppings([]);
       setQuantity(1);
     } catch (err) {
       setAddError(err.response?.data?.error || 'Could not add this to your cart. Please try again.');
@@ -192,7 +236,7 @@ const MenuCard = ({ item }) => {
     event.stopPropagation();
     if (!item.isAvailable) return;
     try {
-      await addToCart(item, { quantity: 1 });
+      await addToCart(item, { quantity: 1, unitPrice: item.price });
     } catch (err) {
       console.error('Quick add failed', err);
     }
@@ -263,6 +307,25 @@ const MenuCard = ({ item }) => {
               + Add
             </button>
           </Tooltip>
+
+          <div className="menu-card__preorder-row" onClick={(event) => event.stopPropagation()}>
+            {preOrderQty > 0 ? (
+              <div className="preorder-controls">
+                <button type="button" className="preorder-btn" onClick={handleDecrement} aria-label="Decrease pre-order quantity">−</button>
+                <span className="preorder-qty">{preOrderQty} added for your reservation</span>
+                <button type="button" className="preorder-btn" onClick={handleIncrement} aria-label="Increase pre-order quantity">+</button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-secondary btn-preorder"
+                onClick={handlePreOrderAction}
+                disabled={!item.isAvailable}
+              >
+                Pre-order for Reservation
+              </button>
+            )}
+          </div>
 
           {isAdmin && (
             <div className="menu-card__admin" onClick={(event) => event.stopPropagation()}>
@@ -471,6 +534,33 @@ const MenuCard = ({ item }) => {
             font-size: 1.25rem;
             cursor: pointer;
           }
+
+          .menu-card-detail__customize { display: flex; flex-direction: column; gap: 0.9rem; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+          .menu-card-detail__customize h4 { font-family: var(--font-serif); font-size: 1.05rem; color: var(--color-text); margin: 0; }
+          .customize__group { display: flex; flex-direction: column; gap: 0.5rem; }
+          .customize__label { font-size: 0.75rem; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+          .customize__options { display: flex; flex-wrap: wrap; gap: 0.7rem 1.1rem; }
+          .customize__option { display: flex; align-items: center; gap: 0.45rem; font-size: 0.9rem; color: var(--color-text-muted); cursor: pointer; }
+          .customize__option input { accent-color: var(--color-primary); cursor: pointer; }
+          .customize__quantity { display: flex; align-items: center; gap: 0.9rem; }
+          .customize__quantity button {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--color-border); background: transparent;
+            color: var(--color-text); font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color var(--transition), background var(--transition);
+          }
+          .customize__quantity button:hover { border-color: var(--color-primary); background: rgba(201,169,98,0.08); }
+          .customize__quantity span { min-width: 20px; text-align: center; font-weight: 600; color: var(--color-text); }
+          .customize__total {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 0.75rem; border-top: 1px dashed var(--color-border);
+          }
+          .customize__total span { font-size: 0.85rem; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+          .customize__total strong { font-family: var(--font-serif); font-size: 1.3rem; color: var(--color-primary); }
+          .customize__add-btn { width: 100%; transition: background var(--transition), transform var(--transition); }
+          .customize__add-btn:disabled { opacity: 0.75; cursor: default; }
+
           @media (max-width: 768px) {
             .menu-card-detail { grid-template-columns: 1fr; }
             .menu-card-detail__media { min-height: 240px; }
@@ -562,74 +652,104 @@ const MenuCard = ({ item }) => {
                 <span className="menu-card-detail__tag">{item.category}</span>
               </div>
 
-              <div className="cooking-request">
-                <h4 className="cooking-request__heading">🍳 Cooking Request</h4>
-                <p className="cooking-request__hint">Let the kitchen know how you'd like this prepared.</p>
+              <div className="menu-card-detail__customize" onClick={(event) => event.stopPropagation()}>
+                {hasToppingsOrVariants && <h4>Customize your dish</h4>}
 
-                <div className="cooking-request__options">
-                  {cookingOptions.map((option) => {
-                    const active = selectedOptions.includes(option);
-                    return (
-                      <button
-                        key={option}
-                        type="button"
-                        className={`cooking-request__chip ${active ? 'cooking-request__chip--active' : ''}`}
-                        onClick={() => toggleCookingOption(option)}
-                        aria-pressed={active}
-                      >
-                        {active ? '✓ ' : ''}{option}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {allowCustomInstructions && (
-                  <div className="cooking-request__notes">
-                    <textarea
-                      className="cooking-request__textarea"
-                      placeholder="Any other instructions? e.g. no coriander, mild spice"
-                      value={customInstructions}
-                      maxLength={maxInstructionsLength}
-                      onChange={(event) => setCustomInstructions(event.target.value)}
-                      rows={2}
-                    />
-                    <span className="cooking-request__count">
-                      {customInstructions.length}/{maxInstructionsLength}
-                    </span>
+                {item.customizations?.variants?.length > 0 && (
+                  <div className="customize__group">
+                    <span className="customize__label">Choose size / variant</span>
+                    <div className="customize__options">
+                      {item.customizations.variants.map((variant) => (
+                        <label key={variant.name} className="customize__option">
+                          <input
+                            type="radio"
+                            name={`variant-${item._id}`}
+                            checked={selectedVariant?.name === variant.name}
+                            onChange={() => setSelectedVariant(variant)}
+                          />
+                          {variant.name}
+                          {variant.priceModifier > 0 && <span>&nbsp;(+₹{variant.priceModifier})</span>}
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </div>
 
-              <div className="menu-card-detail__add-row">
-                <div className="qty-stepper">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    aria-label="Decrease quantity"
-                  >
-                    −
-                  </button>
-                  <span>{quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => q + 1)}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
+                {item.customizations?.toppings?.length > 0 && (
+                  <div className="customize__group">
+                    <span className="customize__label">Add-ons / toppings</span>
+                    <div className="customize__options">
+                      {item.customizations.toppings.map((topping) => (
+                        <label key={topping.name} className="customize__option">
+                          <input
+                            type={item.customizations?.allowMultipleToppings === false ? 'radio' : 'checkbox'}
+                            name={item.customizations?.allowMultipleToppings === false ? `topping-${item._id}` : undefined}
+                            checked={selectedToppings.some((t) => t.name === topping.name)}
+                            onChange={() => toggleTopping(topping)}
+                          />
+                          {topping.name}&nbsp;(+₹{topping.price})
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="cooking-request">
+                  <h4 className="cooking-request__heading">Cooking request</h4>
+                  <p className="cooking-request__hint">Let the kitchen know how you'd like it prepared.</p>
+                  <div className="cooking-request__options">
+                    {cookingOptions.map((option) => (
+                      <button
+                        type="button"
+                        key={option}
+                        className={`cooking-request__chip ${selectedOptions.includes(option) ? 'cooking-request__chip--active' : ''}`}
+                        onClick={() => toggleCookingOption(option)}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+
+                  {allowCustomInstructions && (
+                    <div className="cooking-request__notes">
+                      <textarea
+                        className="cooking-request__textarea"
+                        rows={2}
+                        placeholder="Any other special instructions?"
+                        value={customInstructions}
+                        maxLength={maxInstructionsLength}
+                        onChange={(event) => setCustomInstructions(event.target.value)}
+                      />
+                      <span className="cooking-request__count">
+                        {customInstructions.length}/{maxInstructionsLength}
+                      </span>
+                    </div>
+                  )}
                 </div>
+
+                <div className="customize__quantity">
+                  <span className="customize__label">Quantity</span>
+                  <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">−</button>
+                  <span>{quantity}</span>
+                  <button type="button" onClick={() => setQuantity((q) => q + 1)} aria-label="Increase quantity">+</button>
+                </div>
+
+                <div className="customize__total">
+                  <span>Total</span>
+                  <strong>₹{finalPrice}</strong>
+                </div>
+
+                {addError && <p className="cooking-request__error">{addError}</p>}
 
                 <button
                   type="button"
-                  className="btn btn-primary menu-card-detail__add-btn"
+                  className="btn btn-primary customize__add-btn"
                   onClick={handleAddToCart}
-                  disabled={!item.isAvailable || adding}
+                  disabled={justAdded || adding || !item.isAvailable}
                 >
-                  {adding ? 'Adding…' : justAdded ? '✓ Added to Cart' : `Add to Cart · ₹${item.price * quantity}`}
+                  {justAdded ? 'Added ✓' : !item.isAvailable ? 'Currently Sold Out' : adding ? 'Adding…' : `Add to Cart — ₹${finalPrice}`}
                 </button>
               </div>
-
-              {addError && <p className="cooking-request__error">⚠️ {addError}</p>}
 
               <div className="menu-card-detail__reviews">
                 <h4>Guest reviews</h4>

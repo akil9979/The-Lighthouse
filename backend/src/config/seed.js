@@ -23,7 +23,19 @@ const menuItems = [
     sortOrder: 1,
     calories: 220,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Extra Sambar', price: 25 },
+    { name: 'Extra Coconut Chutney', price: 20 },
+    { name: 'Ghee', price: 30 }
+  ],
+  variants: [
+    { name: '2 Pieces', priceModifier: 0 },
+    { name: '4 Pieces', priceModifier: 70 }
+  ]
+}
   },
   {
     name: 'Masala Dosa',
@@ -39,7 +51,21 @@ const menuItems = [
     sortOrder: 2,
     calories: 310,
     workoutTags: ['Light & Fresh'],
-    badge: 'Bestseller'
+    badge: 'Bestseller',
+    // ---- customizations added ----
+    customizations: {
+      allowMultipleToppings: true,
+      toppings: [
+        { name: 'Extra Chutney', price: 20 },
+        { name: 'Extra Sambar', price: 25 },
+        { name: 'Ghee Roast', price: 30 }
+      ],
+      variants: [
+        { name: 'Regular', priceModifier: 0 },
+        { name: 'Mysore Masala', priceModifier: 40 },
+        { name: 'Cheese Dosa', priceModifier: 60 }
+      ]
+    }
   },
   {
     name: 'Chicken Keema Dosa',
@@ -55,7 +81,19 @@ const menuItems = [
     sortOrder: 3,
     calories: 430,
     workoutTags: ['Post-Workout Fuel'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Extra Chicken Keema', price: 80 },
+    { name: 'Cheese', price: 40 },
+    { name: 'Extra Chutney', price: 20 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Double Keema', priceModifier: 100 }
+  ]
+}
   },
   // ── Lunch ──
   {
@@ -72,7 +110,19 @@ const menuItems = [
     sortOrder: 1,
     calories: 520,
     workoutTags: ['Indulgent'],
-    badge: "Chef's Pick"
+    badge: "Chef's Pick",
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Butter Naan', price: 45 },
+    { name: 'Jeera Rice', price: 70 },
+    { name: 'Extra Paneer', price: 80 }
+  ],
+  variants: [
+    { name: 'Half', priceModifier: -100 },
+    { name: 'Full', priceModifier: 0 }
+  ]
+}
   },
   {
     name: 'Butter Chicken',
@@ -88,7 +138,20 @@ const menuItems = [
     sortOrder: 2,
     calories: 590,
     workoutTags: ['Post-Workout Fuel'],
-    badge: 'Bestseller'
+    badge: 'Bestseller',
+    // ---- customizations added ----
+    customizations: {
+      allowMultipleToppings: true,
+      toppings: [
+        { name: 'Butter Naan', price: 45 },
+        { name: 'Extra Gravy', price: 60 },
+        { name: 'Garlic Naan', price: 55 }
+      ],
+      variants: [
+        { name: 'Half', priceModifier: -120 },
+        { name: 'Full', priceModifier: 0 }
+      ]
+    }
   },
   {
     name: 'Hyderabadi Chicken Biryani',
@@ -104,7 +167,21 @@ const menuItems = [
     sortOrder: 3,
     calories: 640,
     workoutTags: ['Post-Workout Fuel'],
-    badge: "Chef's Pick"
+    badge: "Chef's Pick",
+    // ---- customizations added ----
+    customizations: {
+      allowMultipleToppings: true,
+      toppings: [
+        { name: 'Boiled Egg', price: 25 },
+        { name: 'Extra Raita', price: 20 },
+        { name: 'Mirchi ka Salan', price: 35 }
+      ],
+      variants: [
+        { name: 'Half', priceModifier: -150 },
+        { name: 'Full', priceModifier: 0 },
+        { name: 'Family Pack (serves 3)', priceModifier: 350 }
+      ]
+    }
   },
   // ── Dinner ──
   {
@@ -121,7 +198,19 @@ const menuItems = [
     sortOrder: 1,
     calories: 480,
     workoutTags: ['Post-Workout Fuel'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Butter Naan', price: 45 },
+    { name: 'Garlic Naan', price: 55 },
+    { name: 'Extra Paneer', price: 80 }
+  ],
+  variants: [
+    { name: 'Half', priceModifier: -120 },
+    { name: 'Full', priceModifier: 0 }
+  ]
+}
   },
   {
     name: 'Coastal Fish Curry',
@@ -137,7 +226,19 @@ const menuItems = [
     sortOrder: 2,
     calories: 410,
     workoutTags: ['Post-Workout Fuel'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Steamed Rice', price: 60 },
+    { name: 'Extra Fish Piece', price: 140 },
+    { name: 'Appam', price: 45 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Large', priceModifier: 150 }
+  ]
+}
   },
   {
     name: 'Dal Makhani',
@@ -153,7 +254,19 @@ const menuItems = [
     sortOrder: 3,
     calories: 380,
     workoutTags: ['Indulgent'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Butter Naan', price: 45 },
+    { name: 'Jeera Rice', price: 70 },
+    { name: 'Extra Butter', price: 25 }
+  ],
+  variants: [
+    { name: 'Half', priceModifier: -90 },
+    { name: 'Full', priceModifier: 0 }
+  ]
+}
   },
   // ── Desserts ──
   {
@@ -170,7 +283,20 @@ const menuItems = [
     sortOrder: 1,
     calories: 300,
     workoutTags: ['Indulgent'],
-    badge: 'Bestseller'
+    badge: 'Bestseller',
+    // ---- customizations added ----
+    customizations: {
+      allowMultipleToppings: true,
+      toppings: [
+        { name: 'Vanilla Ice Cream Scoop', price: 50 },
+        { name: 'Extra Syrup', price: 15 },
+        { name: 'Chopped Pistachio', price: 25 }
+      ],
+      variants: [
+        { name: '2 pieces', priceModifier: 0 },
+        { name: '4 pieces', priceModifier: 100 }
+      ]
+    }
   },
   {
     name: 'Kulfi',
@@ -186,7 +312,19 @@ const menuItems = [
     sortOrder: 2,
     calories: 270,
     workoutTags: ['Indulgent'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Rabdi', price: 40 },
+    { name: 'Chopped Pistachio', price: 25 },
+    { name: 'Rose Syrup', price: 20 }
+  ],
+  variants: [
+    { name: 'Single Stick', priceModifier: 0 },
+    { name: 'Double Stick', priceModifier: 150 }
+  ]
+}
   },
   {
     name: 'Rasmalai',
@@ -202,7 +340,19 @@ const menuItems = [
     sortOrder: 3,
     calories: 260,
     workoutTags: ['Indulgent'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: true,
+  toppings: [
+    { name: 'Extra Rabdi', price: 40 },
+    { name: 'Saffron', price: 30 },
+    { name: 'Pistachio', price: 25 }
+  ],
+  variants: [
+    { name: '2 Pieces', priceModifier: 0 },
+    { name: '4 Pieces', priceModifier: 120 }
+  ]
+}
   },
   // ── Drinks ──
   {
@@ -219,7 +369,19 @@ const menuItems = [
     sortOrder: 1,
     calories: 210,
     workoutTags: ['Pre-Workout Energy'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: false,
+  toppings: [
+    { name: 'Extra Mango', price: 30 },
+    { name: 'Vanilla Ice Cream', price: 40 },
+    { name: 'Dry Fruits', price: 35 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Large', priceModifier: 50 }
+  ]
+}
   },
   {
     name: 'Masala Chai',
@@ -235,7 +397,19 @@ const menuItems = [
     sortOrder: 2,
     calories: 90,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: false,
+  toppings: [
+    { name: 'Extra Ginger', price: 10 },
+    { name: 'Extra Cardamom', price: 10 },
+    { name: 'Less Sugar', price: 0 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Large', priceModifier: 30 }
+  ]
+}
   },
   {
     name: 'Fresh Lime Soda',
@@ -251,7 +425,17 @@ const menuItems = [
     sortOrder: 3,
     calories: 60,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    // ---- customizations added ----
+    customizations: {
+      allowMultipleToppings: false,
+      toppings: [
+        { name: 'Sweet', price: 0 },
+        { name: 'Salted', price: 0 },
+        { name: 'Mint-Lime Fusion', price: 10 }
+      ],
+      variants: []
+    }
   },
   {
     name: 'Virgin Mojito',
@@ -267,7 +451,19 @@ const menuItems = [
     sortOrder: 4,
     calories: 70,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: false,
+  toppings: [
+    { name: 'Extra Mint', price: 10 },
+    { name: 'Extra Lime', price: 10 },
+    { name: 'Crushed Ice', price: 0 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Large', priceModifier: 40 }
+  ]
+}
   },
   {
     name: 'Filter Coffee',
@@ -283,7 +479,20 @@ const menuItems = [
     sortOrder: 5,
     calories: 85,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: false,
+  toppings: [
+    { name: 'Extra Decoction', price: 20 },
+    { name: 'Extra Foam', price: 10 },
+    { name: 'Less Sugar', price: 0 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Strong', priceModifier: 20 },
+    { name: 'Large', priceModifier: 30 }
+  ]
+}
   },
   {
     name: 'Kokum Sharbat',
@@ -299,7 +508,19 @@ const menuItems = [
     sortOrder: 6,
     calories: 50,
     workoutTags: ['Light & Fresh'],
-    badge: null
+    badge: null,
+    customizations: {
+  allowMultipleToppings: false,
+  toppings: [
+    { name: 'Mint Leaves', price: 10 },
+    { name: 'Soda', price: 15 },
+    { name: 'Extra Ice', price: 0 }
+  ],
+  variants: [
+    { name: 'Regular', priceModifier: 0 },
+    { name: 'Large', priceModifier: 30 }
+  ]
+}
   }
 ];
 

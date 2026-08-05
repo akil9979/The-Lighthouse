@@ -14,7 +14,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -37,6 +37,11 @@ const Navbar = () => {
     setShowLogoutConfirm(false);
   };
 
+  const handleCartClick = () => {
+    setIsCartOpen(true);
+    setMenuOpen(false);
+  };
+
   return (
     <header className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
       <div className="container navbar__inner">
@@ -55,6 +60,13 @@ const Navbar = () => {
           <NavLink to="/reserve" onClick={() => setMenuOpen(false)} className={({ isActive }) => isActive ? 'nav-link nav-link--active' : 'nav-link'}>
             Reserve & Pre-order
           </NavLink>
+
+          <Tooltip content="View your cart" position="bottom">
+            <button type="button" className="navbar__cart-btn" onClick={handleCartClick} aria-label="Open cart">
+              🛒
+              {cartCount > 0 && <span className="navbar__cart-badge">{cartCount}</span>}
+            </button>
+          </Tooltip>
 
           {user ? (
             <>
@@ -112,7 +124,7 @@ const Navbar = () => {
         onCancel={handleCancelLogout}
       />
 
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   );
 };
