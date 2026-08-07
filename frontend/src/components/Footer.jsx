@@ -42,7 +42,7 @@ const Footer = () => {
             <div className="footer-socials">
               <Tooltip content="Follow us on Instagram" position="top">
                 <a
-                  href="https://www.instagram.com"
+                  href="https://www.instagram.com/thelighthouse.kolkata"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-social-btn"
@@ -57,7 +57,7 @@ const Footer = () => {
               </Tooltip>
               <Tooltip content="Follow us on Facebook" position="top">
                 <a
-                  href="https://www.facebook.com"
+                  href="https://www.facebook.com/thelighthouse.kolkata"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-social-btn"
@@ -70,7 +70,7 @@ const Footer = () => {
               </Tooltip>
               <Tooltip content="Follow us on X (formerly Twitter)" position="top">
                 <a
-                  href="https://x.com"
+                  href="https://x.com/thelighthouse"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="footer-social-btn"
