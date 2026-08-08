@@ -28,7 +28,8 @@ const Auth = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    const sanitized = name === 'phone' ? value.replace(/\D/g, '') : value;
+    setForm((f) => ({ ...f, [name]: sanitized }));
     setError('');
 
     if (name === 'email') {
