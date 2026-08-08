@@ -25,7 +25,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchMenu({ showAll: 'true' });
-    getReviews().then(({ data }) => setReviews(data.data));
+    getReviews()
+      .then(({ data }) => setReviews(data.data))
+      .catch((err) => console.error('Failed to load reviews:', err));
   }, [fetchMenu]);
 
   const stats = {
