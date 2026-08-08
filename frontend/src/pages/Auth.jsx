@@ -78,6 +78,12 @@ const Auth = () => {
       return;
     }
 
+    if (!isLogin && (!form.name || !/^[\p{L}\p{M}\s'.-]{2,50}$/u.test(form.name))) {
+      setError('Name must contain at least 2 letters and cannot be only symbols.');
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isLogin) {
         await login({ email: form.email, password: form.password });
