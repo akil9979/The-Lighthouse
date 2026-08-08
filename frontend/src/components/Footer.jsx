@@ -178,7 +178,7 @@ const Footer = () => {
               <span className="footer-heading-line" />
             </h3>
             <div className="footer-contact-list">
-              <Tooltip content="Visit us at Marine Drive, Mumbai" position="top">
+              <Tooltip content="Visit us at Sarat Bose Road, Kolkata" position="top">
                 <div className="footer-contact-item">
                   <div className="footer-contact-icon-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -187,8 +187,8 @@ const Footer = () => {
                     </svg>
                   </div>
                   <div className="footer-contact-text">
-                    <p>12, Marine Drive,</p>
-                    <p>Mumbai, 400001</p>
+                    <p>42/3, Sarat Bose Road,</p>
+                    <p>Kolkata, 700029</p>
                   </div>
                 </div>
               </Tooltip>
