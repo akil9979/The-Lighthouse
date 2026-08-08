@@ -318,15 +318,15 @@ const Footer = () => {
           </div>
 
           <div className="footer-legal-links">
-            <Link to="#" className="footer-legal-link" onClick={(e) => e.preventDefault()}>
+            <Link to="/privacy" className="footer-legal-link">
               Privacy Policy
             </Link>
             <span className="footer-legal-sep">|</span>
-            <Link to="#" className="footer-legal-link" onClick={(e) => e.preventDefault()}>
+            <Link to="/terms" className="footer-legal-link">
               Terms of Service
             </Link>
             <span className="footer-legal-sep">|</span>
-            <Link to="#" className="footer-legal-link" onClick={(e) => e.preventDefault()}>
+            <Link to="/privacy" className="footer-legal-link">
               Cookie Policy
             </Link>
           </div>
