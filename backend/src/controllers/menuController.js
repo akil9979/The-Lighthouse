@@ -168,7 +168,23 @@ exports.updateMenuItem = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid menu item ID format' });
     }
 
-    const item = await MenuItem.findByIdAndUpdate(req.params.id, req.body, {
+    const {
+      name, description, price, category, isVeg, allergens, tags,
+      isAvailable, image, preparationTime, sortOrder, calories,
+      workoutTags, badge, cookingOptions, allowCustomInstructions,
+      customInstructionsMaxLength, chefSelection, flavorProfile,
+      diningOccasion
+    } = req.body;
+    const allowed = {};
+    ['name', 'description', 'price', 'category', 'isVeg', 'allergens', 'tags',
+     'isAvailable', 'image', 'preparationTime', 'sortOrder', 'calories',
+     'workoutTags', 'badge', 'cookingOptions', 'allowCustomInstructions',
+     'customInstructionsMaxLength', 'chefSelection', 'flavorProfile',
+     'diningOccasion'].forEach(field => {
+      if (req.body[field] !== undefined) allowed[field] = req.body[field];
+    });
+
+    const item = await MenuItem.findByIdAndUpdate(req.params.id, allowed, {
       new: true,
       runValidators: true
     });
