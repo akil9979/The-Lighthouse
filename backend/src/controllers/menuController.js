@@ -152,7 +152,20 @@ exports.getMenuItem = async (req, res) => {
 // @access  Admin
 exports.createMenuItem = async (req, res) => {
   try {
-    const item = await MenuItem.create(req.body);
+    const {
+      name, description, price, category, isVeg, allergens, tags,
+      isAvailable, image, preparationTime, sortOrder, calories,
+      workoutTags, badge, cookingOptions, allowCustomInstructions,
+      customInstructionsMaxLength, chefSelection, flavorProfile,
+      diningOccasion
+    } = req.body;
+    const item = await MenuItem.create({
+      name, description, price, category, isVeg, allergens, tags,
+      isAvailable, image, preparationTime, sortOrder, calories,
+      workoutTags, badge, cookingOptions, allowCustomInstructions,
+      customInstructionsMaxLength, chefSelection, flavorProfile,
+      diningOccasion
+    });
     res.status(201).json({ success: true, data: item });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
